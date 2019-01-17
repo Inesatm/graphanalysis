@@ -1,7 +1,11 @@
 import xml.etree.ElementTree as etree
 from .model import GraphRules, Rule
 from PyQt5.QtGui import QImageReader, QPainter, QColor
+"""
+Symbology Parser Class
+"""
 
+#Read the symbology XML file 
 class SymbologyReader:
     def read(self, path):
         tree = etree.parse(path)
@@ -11,7 +15,8 @@ class SymbologyReader:
         edge_rules = self.parseRule(
             root.findall(".//edgerules/rule"))
         return ({"node_rules": node_rules, "edge_rules": edge_rules})
-
+    
+    #Method to create a symbology XML file from a graphRules object
     def rulesToXml(self, filename, rules):
         graph_render = etree.Element("graphrenderer")
         for key in rules:
@@ -75,7 +80,8 @@ class SymbologyReader:
 
         with open(filename, "wb") as sb:
             renderer.write(sb)
-
+            
+    #Read the content of a Qvariant object to write it into an XML file
     def parseQVariant(self, default_prop, default_prop_value):
         if(type(default_prop_value) == QColor):
             default_prop.set('iscolor', '1')
@@ -91,7 +97,8 @@ class SymbologyReader:
         elif(type(default_prop_value) == str):
             default_prop.set('iscolor', '0')
             default_prop.set('str', str(default_prop_value))
-
+    
+    #Read the rules from the symbology XML file 
     def parseRule(self, sub_tree):
         rules = {}
         for rule in sub_tree:
@@ -112,7 +119,9 @@ class SymbologyReader:
                 graphRule.addRule(Rule(attr_value, prop_value, prop_name))
             rules[property] = graphRule
         return(rules)
-
+    
+  
+    #Read the content of a Qvariant object
     def parseValue(self, value):
         res = 0
         if(int(value.get('iscolor'))):
